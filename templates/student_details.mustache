@@ -1,0 +1,100 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template report_alucoursecompletion/student_details
+
+    Student modal body (PRO; in both editions, rendered only by amd/src/student.js): export buttons, profile, course progress, activity list.
+
+    Example context (json):
+    {
+        "hasexports": true, "exports": [{"url": "#", "label": "Download Excel"}],
+        "haspercent": true, "percent": 50,
+        "profile": [{"label": "Name", "value": "Jane Doe"}],
+        "summary": [{"label": "Status", "value": "In progress"}],
+        "hasactivities": true,
+        "activities": [{"num": 1, "section": "Chapter 1", "name": "Quiz 1", "type": "Quiz",
+            "statuslabel": "Completed", "badgeclass": "bg-success text-white", "completedon": "2026-11-10"}]
+    }
+}}
+<div class="report-alucoursecompletion-details">
+    {{#hasexports}}
+    <div class="d-flex justify-content-end mb-3">
+        {{#exports}}
+        <a class="btn btn-secondary text-nowrap ms-2 ml-2" href="{{url}}">{{label}}</a>
+        {{/exports}}
+    </div>
+    {{/hasexports}}
+    <div class="row">
+        <div class="col-md-6">
+            <h5>{{#str}}studentprofile, report_alucoursecompletion{{/str}}</h5>
+            <table class="table table-sm">
+                <tbody>
+                {{#profile}}
+                    <tr><th scope="row" class="w-50">{{label}}</th><td>{{value}}</td></tr>
+                {{/profile}}
+                </tbody>
+            </table>
+        </div>
+        <div class="col-md-6">
+            <h5>{{#str}}courseprogress, report_alucoursecompletion{{/str}}</h5>
+            {{#haspercent}}
+            <div class="progress mb-2 report-alucoursecompletion-modalbar">
+                <div class="progress-bar" role="progressbar" style="width: {{percent}}%;" aria-valuenow="{{percent}}" aria-valuemin="0" aria-valuemax="100">{{percent}}%</div>
+            </div>
+            {{/haspercent}}
+            <table class="table table-sm">
+                <tbody>
+                {{#summary}}
+                    <tr><th scope="row" class="w-50">{{label}}</th><td>{{value}}</td></tr>
+                {{/summary}}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <h5 class="mt-2">{{#str}}activities, report_alucoursecompletion{{/str}}</h5>
+    {{#hasactivities}}
+    <div class="report-alucoursecompletion-activities border rounded">
+    <table class="table table-sm table-striped mb-0">
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">{{#str}}section, report_alucoursecompletion{{/str}}</th>
+                <th scope="col">{{#str}}activity, report_alucoursecompletion{{/str}}</th>
+                <th scope="col">{{#str}}type, report_alucoursecompletion{{/str}}</th>
+                <th scope="col">{{#str}}status, report_alucoursecompletion{{/str}}</th>
+                <th scope="col">{{#str}}activitycompletedon, report_alucoursecompletion{{/str}}</th>
+            </tr>
+        </thead>
+        <tbody>
+        {{#activities}}
+            <tr>
+                <td>{{num}}</td>
+                <td>{{section}}</td>
+                <td>{{name}}</td>
+                <td>{{type}}</td>
+                <td><span class="badge {{badgeclass}}">{{statuslabel}}</span></td>
+                <td>{{completedon}}</td>
+            </tr>
+        {{/activities}}
+        </tbody>
+    </table>
+    </div>
+    {{/hasactivities}}
+    {{^hasactivities}}
+    <p class="text-muted">{{#str}}noactivities, report_alucoursecompletion{{/str}}</p>
+    {{/hasactivities}}
+</div>
