@@ -25,8 +25,8 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'report_alucoursecompletion';
-$plugin->version   = 2026112800;
+$plugin->version   = 2026113000;
 $plugin->requires  = 2024100700;
 $plugin->supported = [405, 503];
 $plugin->maturity  = MATURITY_STABLE;
-$plugin->release   = '1.0.5';
+$plugin->release   = '1.0.6';

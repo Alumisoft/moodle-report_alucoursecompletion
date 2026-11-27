@@ -24,7 +24,6 @@ namespace report_alucoursecompletion\local;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class edition {
-
     /** @var string Copyright holder on the About tab, plain text (no link) - user decision 2026-11-26. */
     public const COPYRIGHT = 'Alumisoft - developer@alumisoft.com';
 
@@ -37,5 +36,4 @@ class edition {
         'about_support' => 'https://github.com/Alumisoft/moodle-report_alucoursecompletion/issues',
         'about_source' => 'https://github.com/Alumisoft/moodle-report_alucoursecompletion',
     ];
-
 }

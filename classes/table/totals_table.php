@@ -124,7 +124,6 @@ class totals_table extends \table_sql {
         $this->out(0, false);
     }
 
-
     /**
      * Cell text: escaped for the screen and PDF (HTML), plain for CSV / Excel.
      *
