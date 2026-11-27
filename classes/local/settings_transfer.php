@@ -17,8 +17,8 @@
 namespace report_alucoursecompletion\local;
 
 /**
- * Settings export / import (JSON file) - e.g. to keep the settings when going from the PRO edition back to
- * the free one (uninstall removes the settings), or to copy them to another site.
+ * Settings export / import (JSON file) - e.g. to keep the settings over an uninstall (uninstall removes the
+ * settings), or to copy them to another site.
  *
  * Known settings = the settings on this plugin's settings page (admin tree), so an edition only imports its own
  * settings; values are written through the admin settings themselves (same validation as the settings page) and
@@ -48,20 +48,23 @@ class settings_transfer {
     /** @var string Result: value not accepted. */
     public const RESULT_INVALID = 'invalid';
 
-    /** @var string[] Settings never exported / imported: the licence key belongs to one site. */
-    public const NOT_TRANSFERRED = ['licencekey'];
+    /** @var string[] Settings never exported / imported. */
+    public const NOT_TRANSFERRED = [
+    ];
 
-    /** @var string[] Admin settings pages exported / imported (every admin tab except Pro). */
-    public const PAGES = ['reportalucoursecompletion', 'reportalucoursecompletion_export',
-        'reportalucoursecompletion_details', 'reportalucoursecompletion_cert', 'reportalucoursecompletion_dedication'];
+    /** @var string[] Admin settings pages exported / imported. */
+    public const PAGES = [
+        'reportalucoursecompletion',
+    ];
 
     /**
-     * Edition of this code: 'free' or 'pro'.
+     * Edition of this code, written to the export file.
      *
      * @return string
      */
     public static function edition(): string {
-        return edition::name();
+        $edition = 'free';
+        return $edition;
     }
 
     /**

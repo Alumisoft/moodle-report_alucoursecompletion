@@ -16,7 +16,6 @@
 
 namespace report_alucoursecompletion\reportmanager;
 
-use report_alucoursecompletion\local\edition;
 use report_alucoursecompletion\local\helper;
 
 /**
@@ -110,8 +109,8 @@ class provider {
 
     /**
      * Columns: key => [title, sortable, pdfwidth (% of the page width)].
-     * Optional columns: certificate issued (setting), time spent (PRO, Course dedication block used by the
-     * selected course - all courses: by at least one reported course).
+     * Optional columns: certificate issued, time spent (Course dedication block used by the selected course - all
+     * courses: by at least one reported course), when enabled.
      *
      * @param array $filters cleaned filters (only courseid is used)
      * @return array
@@ -144,14 +143,13 @@ class provider {
     }
 
     /**
-     * Time spent column shown (PRO active + Course dedication block used, see get_columns())?
+     * Time spent column shown?
      *
      * @param int $courseid selected course, 0 = all
      * @return bool
      */
     public static function timespent_shown(int $courseid): bool {
-        return edition::pro_active()
-            && \report_alucoursecompletion\pro\time_spent::shown($courseid, array_keys(helper::get_course_options()));
+        return false;
     }
 
     /**
@@ -207,9 +205,6 @@ class provider {
                            AND pccc.userid = r.userid AND pccc.timecompleted > 0
                      WHERE pcc.course = r.courseid AND pcc.criteriatype = :crittype2) AS progdone,
                    $status AS statuscode";
-        if (edition::pro_active() && \report_alucoursecompletion\pro\time_spent::get_courses()) {
-            $fields .= ', ' . \report_alucoursecompletion\pro\time_spent::field_sql('r');
-        }
         $params['crittype1'] = COMPLETION_CRITERIA_TYPE_ACTIVITY;
         $params['crittype2'] = COMPLETION_CRITERIA_TYPE_ACTIVITY;
 

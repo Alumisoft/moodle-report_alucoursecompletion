@@ -20,7 +20,6 @@ defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->libdir . '/tablelib.php');
 
-use report_alucoursecompletion\local\edition;
 use report_alucoursecompletion\local\helper;
 use report_alucoursecompletion\reportmanager\provider;
 
@@ -41,16 +40,16 @@ class enrolments_table extends \table_sql {
     /** @var string HTML above the table, right (export buttons). */
     protected string $topright = '';
 
-    /** @var bool PDF export grouped by course (PRO): one table per course, no Course column. */
+    /** @var bool PDF export grouped by course: one table per course, no Course column. */
     protected bool $grouppdf = false;
 
     /** @var float[] PDF column weights (provider pdfwidth), in column order. */
     protected array $pdfweights = [];
 
-    /** @var string PDF summary box HTML (PRO, one course selected). */
+    /** @var string PDF summary box HTML (one course selected). */
     protected string $pdfsummary = '';
 
-    /** @var bool Student details modal (PRO): rows clickable. */
+    /** @var bool Student details: rows clickable. */
     protected bool $details;
 
     /**
@@ -151,68 +150,11 @@ class enrolments_table extends \table_sql {
      * @param string $title sheet title
      */
     public function download(string $format, string $filename, string $title): void {
-        if ($format === 'pdf' && edition::pro_active()) {
-            $keys = array_keys($this->columns);
-            $i = array_search('coursename', $keys, true);
-            $headers = $this->headers;
-            unset($headers[$i], $keys[$i], $this->pdfweights[$i]);
-            $this->define_columns(array_values($keys));
-            $this->define_headers(array_values($headers));
-            $this->pdfweights = array_values($this->pdfweights);
-            $this->grouppdf = true;
-        }
         $this->setup();
         $this->is_downloading($format, $filename, $title);
         \raise_memory_limit(MEMORY_EXTRA);
         \core_php_time_limit::raise();
         $this->out(0, false);
-    }
-
-    /**
-     * PDF summary box (PRO, shown above the rows), e.g. the selected course's counts.
-     *
-     * @param string $html
-     */
-    public function set_pdf_summary(string $html): void {
-        $this->pdfsummary = $html;
-    }
-
-    /**
-     * PDF (PRO): own export class with column widths, groups and the summary box.
-     *
-     * @param \core_table\dataformat_export_format|null $exportclass
-     * @return \core_table\dataformat_export_format|null
-     */
-    public function export_class_instance($exportclass = null) {
-        if ($exportclass === null && $this->exportclass === null && $this->download === 'pdf' && edition::pro_active()) {
-            $this->exportclass = new \report_alucoursecompletion\pro\pdf_export_format(
-                $this,
-                $this->pdfweights,
-                $this->grouppdf
-            );
-            $this->exportclass->get_writer()->set_summary($this->pdfsummary);
-            $this->exportclass->start_document($this->filename, $this->sheettitle);
-        }
-        return parent::export_class_instance($exportclass);
-    }
-
-    /**
-     * Rows; grouped PDF starts a new group (course title + heading row) when the course changes.
-     */
-    public function build_table() {
-        if (!$this->grouppdf || !($this->exportclass instanceof \report_alucoursecompletion\pro\pdf_export_format)) {
-            parent::build_table();
-            return;
-        }
-        $writer = $this->exportclass->get_writer();
-        $courseid = null;
-        foreach ($this->rawdata as $row) {
-            if ($row->courseid !== $courseid) {
-                $courseid = $row->courseid;
-                $writer->start_group(format_string($row->coursename, true, ['escape' => false]));
-            }
-            $this->add_data_keyed($this->format_row($row), $this->get_row_class($row));
-        }
     }
 
     /**
@@ -307,7 +249,7 @@ class enrolments_table extends \table_sql {
     }
 
     /**
-     * Row class: clickable rows when the student details modal is on (PRO).
+     * Row class: clickable rows when student details are on.
      *
      * @param \stdClass $row
      * @return string
@@ -396,16 +338,6 @@ class enrolments_table extends \table_sql {
             helper::STATUS_INPROGRESS => 'bg-info',
         ];
         return \html_writer::span($label, 'badge text-white ' . $classes[$row->status]);
-    }
-
-    /**
-     * Time spent (PRO, Course dedication block): '' for a course without the block.
-     *
-     * @param \stdClass $row
-     * @return string
-     */
-    public function col_timespent($row) {
-        return $this->text(\report_alucoursecompletion\pro\time_spent::cell($row));
     }
 
     /**

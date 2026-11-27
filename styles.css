@@ -1,36 +1,10 @@
-.report-alucoursecompletion-table tr.report-alucoursecompletion-row {
-    cursor: pointer;
-}
-
-.report-alucoursecompletion-modalbar {
-    height: 1.25rem;
-}
-
-.report-alucoursecompletion-activities {
-    max-height: 50vh;
-    overflow-y: auto;
-}
-
-.report-alucoursecompletion-activities table {
-    border-collapse: separate;
-    border-spacing: 0;
-}
-
-.report-alucoursecompletion-activities thead th {
-    position: sticky;
-    top: 0;
-    z-index: 1;
-    border-top: 0;
-    background-color: var(--bs-body-bg, #fff);
-    box-shadow: inset 0 -1px 0 #dee2e6;
-}
-
-.report-alucoursecompletion-pro {
-    background-color: #0f6cbf;
-    color: #fff;
-    margin-left: .25rem;
-    vertical-align: middle;
-}
+/**
+ * Styles of the Course completion report.
+ *
+ * @package    report_alucoursecompletion
+ * @copyright  2026 Alumisoft developer@alumisoft.com
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
 .report-alucoursecompletion-admintitle {
     padding-top: 20px;
@@ -42,56 +16,7 @@
     display: none;
 }
 
-.report-alucoursecompletion-installed {
-    background-color: #198754;
-    color: #fff;
-}
-
-.report-alucoursecompletion-titlepro {
-    background-color: #ced4da;
-    color: #fff;
-    vertical-align: middle;
-}
-
 .report-alucoursecompletion-admintabs .nav-tabs > li:last-child {
     margin-left: auto;
 }
 
-.report-alucoursecompletion-featuresbox {
-    max-width: 600px;
-    margin: 0 auto;
-}
-
-.report-alucoursecompletion-featuresbox .report-alucoursecompletion-features {
-    width: 100%;
-    margin: 1rem 0;
-    border: 1px solid #dee2e6;
-    border-collapse: collapse;
-}
-.report-alucoursecompletion-featuresbox .report-alucoursecompletion-features th,
-.report-alucoursecompletion-featuresbox .report-alucoursecompletion-features td {
-    padding: 0.5rem 0.75rem;
-    border: 1px solid #dee2e6;
-    vertical-align: middle;
-}
-.report-alucoursecompletion-featuresbox .report-alucoursecompletion-features thead th {
-    background-color: #f1f3f5;
-    font-weight: 600;
-}
-.report-alucoursecompletion-featuresbox .report-alucoursecompletion-features th.c1,
-.report-alucoursecompletion-featuresbox .report-alucoursecompletion-features th.c2,
-.report-alucoursecompletion-featuresbox .report-alucoursecompletion-features td.c1,
-.report-alucoursecompletion-featuresbox .report-alucoursecompletion-features td.c2 {
-    width: 5rem;
-    text-align: center;
-}
-.report-alucoursecompletion-featuresbox .report-alucoursecompletion-features tbody tr:nth-child(even) {
-    background-color: #f8f9fa;
-}
-.report-alucoursecompletion-featuresbox .report-alucoursecompletion-features td.c2 {
-    color: #198754;
-    font-weight: 600;
-}
-.report-alucoursecompletion-featuresbox .report-alucoursecompletion-features td.c1 {
-    color: #198754;
-}

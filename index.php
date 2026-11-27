@@ -25,7 +25,6 @@
 require(__DIR__ . '/../../config.php');
 require_once($CFG->libdir . '/adminlib.php');
 
-use report_alucoursecompletion\local\edition;
 use report_alucoursecompletion\local\helper;
 use report_alucoursecompletion\reportmanager\provider;
 use report_alucoursecompletion\table\enrolments_table;
@@ -68,33 +67,16 @@ if ($download !== '' && in_array($download, helper::export_formats(), true) && $
         ? format_string(get_course($filters['courseid'])->fullname, true, ['escape' => false]) : '';
     $name = helper::export_filename(['course-enrolments', $coursename, $filters['year'] ?: '',
         $filters['status'], $filters['search']]);
-    if ($download === 'pdf' && $filters['courseid'] && edition::pro_active()) {
-        $counts = [];
-        foreach ($table->get_status_counts() as $key => $value) {
-            $counts[get_string('sum_' . $key, $component)] = $value;
-        }
-        $labels = array_filter([
-            $filters['year'] ? get_string('year', $component) . ': ' . $filters['year'] : '',
-            $filters['status'] ? get_string('status', $component) . ': ' .
-                get_string('status_' . $filters['status'], $component) : '',
-            $filters['search'] !== '' ? get_string('search', $component) . ': ' . $filters['search'] : '',
-        ]);
-        $table->set_pdf_summary(\report_alucoursecompletion\pro\pdf_writer::summary_html($coursename, $counts, $labels));
-    }
     $table->download($download, $name, get_string('tab_enrolments', $component));
     die();
 }
 
 echo $OUTPUT->header();
-$probadge = edition::pro_active() ? ' ' . html_writer::span(
-    get_string('probadge', $component),
-    'badge report-alucoursecompletion-titlepro'
-) : '';
+$badge = '';
 echo html_writer::div(
-    $OUTPUT->heading(get_string('pluginname', $component) . $probadge, 2, 'mb-0') . helper::settings_button(),
+    $OUTPUT->heading(get_string('pluginname', $component) . $badge, 2, 'mb-0') . helper::settings_button(),
     'd-flex justify-content-between align-items-center flex-wrap mb-3'
 );
-echo edition::licence_notice();
 echo helper::tabs('enrolments');
 
 $s = fn(string $id): string => get_string($id, $component);
@@ -179,9 +161,5 @@ $table->set_top_left($OUTPUT->render($select));
 $table->set_top_right(helper::export_buttons($url));
 
 $table->out($perpage, false);
-
-if (helper::student_details_enabled()) {
-    $PAGE->requires->js_call_amd('report_alucoursecompletion/student', 'init');
-}
 
 echo $OUTPUT->footer();

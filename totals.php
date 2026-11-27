@@ -25,7 +25,6 @@
 require(__DIR__ . '/../../config.php');
 require_once($CFG->libdir . '/adminlib.php');
 
-use report_alucoursecompletion\local\edition;
 use report_alucoursecompletion\local\helper;
 use report_alucoursecompletion\local\totals;
 use report_alucoursecompletion\table\totals_table;
@@ -76,7 +75,6 @@ echo html_writer::div(
     $OUTPUT->heading(get_string('pluginname', $component), 2, 'mb-0') . helper::settings_button(),
     'd-flex justify-content-between align-items-center flex-wrap mb-3'
 );
-echo edition::licence_notice();
 echo helper::tabs('totals');
 
 $s = fn(string $id): string => get_string($id, $component);

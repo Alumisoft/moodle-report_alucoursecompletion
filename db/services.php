@@ -15,9 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Web service functions. In both editions; the function is registered only when its PRO class is installed
- * (classes/pro/, not in the free zip), so the free edition has no web service. Read on install / upgrade:
- * free -> PRO is an upgrade (PRO version one day later), so the function is added then.
+ * Web service functions.
  *
  * @package    report_alucoursecompletion
  * @copyright  2026 Alumisoft developer@alumisoft.com
@@ -27,12 +25,3 @@
 defined('MOODLE_INTERNAL') || die();
 
 $functions = [];
-if (class_exists('\report_alucoursecompletion\pro\external\get_student_details')) {
-    $functions['report_alucoursecompletion_get_student_details'] = [
-        'classname' => '\report_alucoursecompletion\pro\external\get_student_details',
-        'description' => 'Student profile, course progress and activity list for the report modal.',
-        'type' => 'read',
-        'ajax' => true,
-        'capabilities' => 'report/alucoursecompletion:view',
-    ];
-}

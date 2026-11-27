@@ -102,29 +102,24 @@ class helper {
     }
 
     /**
-     * Export formats offered (free: CSV; PRO with a valid licence: + Excel, PDF), only those whose Moodle data
-     * format plugin is enabled.
+     * Export formats offered, only those whose Moodle data format plugin is enabled.
      *
-     * @return string[] data format names, e.g. ['csv', 'excel', 'pdf']
+     * @return string[] data format names, e.g. ['csv']
      */
     public static function export_formats(): array {
-        $formats = edition::pro_active() ? ['csv', 'excel', 'pdf'] : ['csv'];
+        $formats = ['csv'];
         $enabled = \core\plugininfo\dataformat::get_enabled_plugins();
         return array_values(array_filter($formats, fn($f) => isset($enabled[$f])));
     }
 
     /**
-     * Export file name (no extension): the "Export prefix" setting (PRO), the name parts, today's date.
-     * A "-" is added after the prefix unless it already ends with "-", "_" or ".".
+     * Export file name (no extension): the name parts and today's date.
      *
      * @param string[] $parts e.g. ['course-totals', '2025']; empty parts are skipped
      * @return string
      */
     public static function export_filename(array $parts): string {
-        $prefix = edition::pro_active() ? \report_alucoursecompletion\pro\export_prefix::get() : '';
-        if ($prefix !== '' && !preg_match('/[-_.]$/', $prefix)) {
-            $prefix .= '-';
-        }
+        $prefix = '';
         $parts = array_filter(array_map(fn($p) => trim(preg_replace(
             '/[^\p{L}\p{N}]+/u',
             '-',
@@ -191,22 +186,21 @@ class helper {
     }
 
     /**
-     * Course ids left out of the report (PRO setting "Excluded courses"; none when PRO is not active).
+     * Course ids left out of the report.
      *
      * @return int[]
      */
     public static function get_excluded_courses(): array {
-        return edition::pro_active() ? \report_alucoursecompletion\pro\excluded_courses::get() : [];
+        return [];
     }
 
     /**
-     * Is the student detail modal available: PRO active and the PRO setting "Enable student detail modal" on.
-     * Rows clickable, modal script, its web service and its Excel / PDF download all check this.
+     * Are the table rows clickable for a student detail view?
      *
      * @return bool
      */
     public static function student_details_enabled(): bool {
-        return edition::pro_active() && \report_alucoursecompletion\pro\student_details::enabled();
+        return false;
     }
 
     /**
@@ -357,14 +351,12 @@ class helper {
     }
 
     /**
-     * Is the Certificate issued column shown: Custom certificate installed, PRO active and the PRO setting "Enable
-     * Certificate column" on?
+     * Is the Certificate issued column shown?
      *
      * @return bool
      */
     public static function cert_column_shown(): bool {
-        return self::has_customcert() && edition::pro_active()
-            && \report_alucoursecompletion\pro\certificate::column_enabled();
+        return false;
     }
 
     /**
@@ -374,7 +366,7 @@ class helper {
      * @return bool
      */
     public static function cert_counts_as_completed(): bool {
-        return self::cert_column_shown() && \report_alucoursecompletion\pro\certificate::counts_as_completed();
+        return false;
     }
 
     /**
@@ -448,47 +440,8 @@ class helper {
     }
 
     /**
-     * "PRO" badge shown next to the label of a PRO setting (own CSS class: badge colours differ between Moodle 4.5
-     * and 5.x).
-     *
-     * @return string
-     */
-    public static function pro_badge(): string {
-        return ' ' . \html_writer::span(
-            get_string('probadge', 'report_alucoursecompletion'),
-            'badge report-alucoursecompletion-pro'
-        );
-    }
-
-    /**
-     * Pro tab, free edition: features table (Feature | Free | PRO) + "Read more about PRO edition" link.
-     *
-     * @return string HTML
-     */
-    public static function pro_features_html(): string {
-        $c = 'report_alucoursecompletion';
-        $table = new \html_table();
-        $table->attributes['class'] = 'generaltable report-alucoursecompletion-features';
-        $table->head = [get_string('feature', $c), get_string('editionfree', $c), get_string('editionpro', $c)];
-        $table->align = ['left', 'center', 'center'];
-        $yes = '&#10003;';
-        foreach (edition::FEATURES as $key => [$free, $pro]) {
-            $table->data[] = [s(get_string($key, $c)), $free ? $yes : '', $pro ? $yes : ''];
-        }
-        return \html_writer::div(
-            \html_writer::table($table) . \html_writer::tag('p', \html_writer::link(
-                edition::PRO_INFO_URL,
-                get_string('proreadmore', $c),
-                ['target' => '_blank', 'rel' => 'noopener', 'class' => 'btn btn-primary']
-            )),
-            'report-alucoursecompletion-featuresbox'
-        );
-    }
-
-    /**
-     * About tab: plugin name, edition, version, supported Moodle versions, licence, and the documentation / support /
-     * source links that are set (edition::ABOUT_LINKS). "Read more about PRO edition" only in the free edition: the
-     * Moodle Marketplace edition must not link to buying anything outside the Marketplace.
+     * About tab: plugin name, version, supported Moodle versions, licence, and the documentation / support /
+     * source links that are set (edition::ABOUT_LINKS).
      *
      * @return string HTML
      */
@@ -498,7 +451,6 @@ class helper {
         $table = new \html_table();
         $table->attributes['class'] = 'generaltable report-alucoursecompletion-about';
         $table->data[] = [get_string('about_plugin', $c), s(get_string('pluginname', $c)) . ' (' . $c . ')'];
-        $table->data[] = [get_string('about_edition', $c), get_string('about_edition_' . edition::package(), $c)];
         $table->data[] = [get_string('about_version', $c), s(($plugin->release ?? '') . ' (' . ($plugin->versiondisk ?? '') . ')')];
         $table->data[] = [get_string('about_moodle', $c), get_string('about_moodle_desc', $c)];
         $table->data[] = [get_string('about_copyright', $c), s(edition::COPYRIGHT)];
@@ -517,13 +469,6 @@ class helper {
             }
         }
         $html = \html_writer::table($table);
-        if (edition::package() === 'free') {
-            $html .= \html_writer::tag('p', \html_writer::link(
-                edition::PRO_INFO_URL,
-                get_string('proreadmore', $c),
-                ['target' => '_blank', 'rel' => 'noopener', 'class' => 'btn btn-primary']
-            ));
-        }
         return \html_writer::div($html, 'report-alucoursecompletion-aboutbox');
     }
 
@@ -531,10 +476,7 @@ class helper {
      * Main title ("Settings | <plugin name> Report") and tabs, on top of every admin settings page of the plugin.
      * On admin/settings.php core prints the page name just above it: styles.css hides that heading there.
      *
-     * The PRO-only tabs (Report export, Student detail modal, Certificate, Dedication time, Pro) only when
-     * edition::pro_tabs_shown(): not in the Moodle Marketplace edition, which has no such pages.
-     *
-     * @param string $current 'settings', 'export', 'details', 'certificate', 'dedication', 'pro', 'about' or 'transfer'
+     * @param string $current tab id, e.g. 'settings', 'about' or 'transfer'
      * @return string
      */
     public static function admin_tabs(string $current): string {
@@ -551,36 +493,6 @@ class helper {
                 get_string('tab_settings', 'report_alucoursecompletion')
             ),
         ];
-        $protabs = [
-            new \tabobject(
-                'export',
-                new \moodle_url('/admin/settings.php', ['section' => 'reportalucoursecompletion_export']),
-                get_string('tab_export', 'report_alucoursecompletion')
-            ),
-            new \tabobject(
-                'details',
-                new \moodle_url('/admin/settings.php', ['section' => 'reportalucoursecompletion_details']),
-                get_string('tab_details', 'report_alucoursecompletion')
-            ),
-            new \tabobject(
-                'certificate',
-                new \moodle_url('/admin/settings.php', ['section' => 'reportalucoursecompletion_cert']),
-                get_string('tab_certificate', 'report_alucoursecompletion')
-            ),
-            new \tabobject(
-                'dedication',
-                new \moodle_url('/admin/settings.php', ['section' => 'reportalucoursecompletion_dedication']),
-                get_string('tab_dedication', 'report_alucoursecompletion')
-            ),
-            new \tabobject(
-                'pro',
-                new \moodle_url('/admin/settings.php', ['section' => 'reportalucoursecompletion_pro']),
-                get_string('tab_pro', 'report_alucoursecompletion')
-            ),
-        ];
-        if (edition::pro_tabs_shown()) {
-            $tabs = array_merge($tabs, $protabs);
-        }
         $tabs[] = new \tabobject(
             'about',
             new \moodle_url('/admin/settings.php', ['section' => 'reportalucoursecompletion_about']),

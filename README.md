@@ -8,13 +8,13 @@ plus totals per course.
 
 ## Features
 
-- **Course Enrolments**: one row per student per course - Student, Email, Course, Enrol date, Activity progress,
+- **Course enrolments**: one row per student per course - Student, Email, Course, Enrol date, Activity progress,
   Progress %, Status, Course completed, Last access.
   - Status: **Completed**, **In progress**, or **Did not finish** (enrolment ended, course not completed).
   - Filters: course, enrol year, status, name search (several names separated by commas).
-  - Sortable columns (each user's sort is remembered), 25 / 50 / 100 rows per page.
+  - Sortable columns (a user's sort is kept for the rest of their session), 25 / 50 / 100 rows per page.
   - With one course selected: a summary box with its totals.
-- **Course Totals**: one row per course - created date, course status (Open / Closed / Hidden), total enrolled,
+- **Course totals**: one row per course - created date, course status (Open / Closed / Hidden), total enrolled,
   in progress, completed, did not finish. Filters: course name, enrol year, course status.
 - **CSV export** of both tables (all rows of the current filters).
 - **Settings**: default sort and date format (Report view tab); export / import the settings as a JSON file,
@@ -37,9 +37,9 @@ The report shows personal data (names, emails, progress): give the capability on
 
 | | |
 |---|---|
-| Moodle | Supported: 4.5, 5.2, 5.3. Also installs on 5.0 and 5.1 (Moodle versions that only get security fixes), without support. |
+| Moodle | Supported: 4.5, 5.2, 5.3. Also installs on 5.0 and 5.1 (Moodle versions that only get security fixes), but is not tested or supported there. |
 | PHP | 8.1 to 8.4 (tested on 8.1 and 8.4) |
-| Database | Tested on MariaDB and PostgreSQL |
+| Database | Tested on MariaDB and PostgreSQL (MySQL not tested) |
 | Data formats | CSV must be enabled: Site administration > Plugins > Data formats |
 
 No other plugins needed.

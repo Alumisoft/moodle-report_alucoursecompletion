@@ -20,7 +20,6 @@ defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->libdir . '/tablelib.php');
 
-use report_alucoursecompletion\local\edition;
 use report_alucoursecompletion\local\helper;
 use report_alucoursecompletion\local\totals;
 
@@ -125,19 +124,6 @@ class totals_table extends \table_sql {
         $this->out(0, false);
     }
 
-    /**
-     * PDF (PRO): own export class, Course column 9/21 of the page width, the others 2/21 each.
-     *
-     * @param \core_table\dataformat_export_format|null $exportclass
-     * @return \core_table\dataformat_export_format|null
-     */
-    public function export_class_instance($exportclass = null) {
-        if ($exportclass === null && $this->exportclass === null && $this->download === 'pdf' && edition::pro_active()) {
-            $this->exportclass = new \report_alucoursecompletion\pro\pdf_export_format($this, [9, 2, 2, 2, 2, 2, 2]);
-            $this->exportclass->start_document($this->filename, $this->sheettitle);
-        }
-        return parent::export_class_instance($exportclass);
-    }
 
     /**
      * Cell text: escaped for the screen and PDF (HTML), plain for CSV / Excel.

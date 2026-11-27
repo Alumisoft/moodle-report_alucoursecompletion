@@ -58,8 +58,7 @@ if ($form->is_submitted() && $form->is_validated()) {
 echo $OUTPUT->header();
 echo \report_alucoursecompletion\local\helper::admin_tabs('transfer');
 
-$transferdesc = \report_alucoursecompletion\local\edition::package() === 'marketplace'
-    ? 'settingstransfer_desc_nopro' : 'settingstransfer_desc';
+$transferdesc = 'settingstransfer_desc';
 echo html_writer::tag('p', get_string($transferdesc, $component));
 
 echo $OUTPUT->heading(get_string('export', $component), 3);
